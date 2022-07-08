@@ -3,8 +3,9 @@ import RightContent from '@/components/RightContent';
 import { LinkOutlined } from '@ant-design/icons';
 import type { Settings as LayoutSettings } from '@ant-design/pro-components';
 import { SettingDrawer } from '@ant-design/pro-components';
-import type { RunTimeLayoutConfig } from '@umijs/max';
-import { history, Link } from '@umijs/max';
+import type { RunTimeLayoutConfig, RequestConfig } from '@umijs/max';
+import { history, Link, getLocale } from '@umijs/max';
+import { StorageEnum } from '@/common/enum';
 import defaultSettings from '../config/defaultSettings';
 import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
 
@@ -44,6 +45,38 @@ export async function getInitialState(): Promise<{
   };
 }
 
+// 请求拦截
+const requestInterceptors: any = (url: string, options: RequestConfig) => {
+  const headers = {
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+    token: localStorage.getItem(StorageEnum.Token) || '',
+    i18n: getLocale(),
+  };
+  return {
+    url: `${url}`,
+    options: {
+      ...options,
+      headers,
+    },
+  };
+};
+
+export const request: RequestConfig = {
+  errorConfig: {
+    errorHandler: (error) => {
+      /* 异常处理 */
+      console.error('error', error.data);
+      if (error.data?.error) {
+        if (error.data.error.code === 401) {
+          return history.replace('/user/login');
+        }
+      }
+    },
+  },
+  requestInterceptors: [requestInterceptors]
+};
+
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
   return {
@@ -63,11 +96,11 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     },
     links: isDev
       ? [
-          <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
-            <LinkOutlined />
-            <span>OpenAPI 文档</span>
-          </Link>,
-        ]
+        <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
+          <LinkOutlined />
+          <span>OpenAPI 文档</span>
+        </Link>,
+      ]
       : [],
     menuHeaderRender: undefined,
     // 自定义 403 页面
