@@ -20,6 +20,12 @@
     component: './Welcome',
   },
   {
+    name: '员工管理',
+    icon: 'table',
+    path: '/staff',
+    component: './Staff',
+  },
+  {
     path: '/admin',
     name: 'admin',
     icon: 'crown',
@@ -35,12 +41,6 @@
         component: './404',
       },
     ],
-  },
-  {
-    name: 'list.table-list',
-    icon: 'table',
-    path: '/list',
-    component: './TableList',
   },
   {
     path: '/',
