@@ -7,7 +7,7 @@ import type { RunTimeLayoutConfig, RequestConfig } from '@umijs/max';
 import { history, Link, getLocale } from '@umijs/max';
 import { StorageEnum } from '@/common/enum';
 import defaultSettings from '../config/defaultSettings';
-import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
+import { getCurrentUser } from './services/user';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
@@ -23,8 +23,8 @@ export async function getInitialState(): Promise<{
 }> {
   const fetchUserInfo = async () => {
     try {
-      const msg = await queryCurrentUser();
-      return msg.data;
+      const msg = await getCurrentUser();
+      return msg;
     } catch (error) {
       history.push(loginPath);
     }

@@ -1,4 +1,5 @@
 import { request } from '@umijs/max';
+import { StorageEnum} from '@/common/enum'
 import ENV from '@/env';
 
 export async function loginUser(
@@ -31,10 +32,14 @@ export async function getFakeCaptcha(
     });
 }
 
+/** 获取当前的用户 GET /api/currentUser */
+export async function getCurrentUser() {
+    const loginInfo = localStorage.getItem(StorageEnum.LoginInfo)
+    return loginInfo ? JSON.parse(loginInfo) : null;
+}
+
 /** Logs out current logged in user session GET /user/logout */
 export async function logoutUser(options?: { [key: string]: any }) {
-    return request<any>('/user/logout', {
-        method: 'GET',
-        ...(options || {}),
-    });
+    localStorage.removeItem(StorageEnum.LoginInfo)
+    return true;
 }

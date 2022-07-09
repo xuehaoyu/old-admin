@@ -1,4 +1,3 @@
-import Footer from '@/components/Footer';
 import { loginUser, getFakeCaptcha } from '@/services/user';
 import {
   LockOutlined,
@@ -14,6 +13,7 @@ import {
 import { FormattedMessage, history, SelectLang, useIntl, useModel } from '@umijs/max';
 import { Alert, message, Tabs } from 'antd';
 import React, { useState } from 'react';
+import { StorageEnum } from '@/common/enum';
 import styles from './index.less';
 
 const LoginMessage: React.FC<{
@@ -49,6 +49,11 @@ const Login: React.FC = () => {
   };
 
   const handleSubmit = async (values: API.LoginParams) => {
+    localStorage.setItem(StorageEnum.LoginInfo, JSON.stringify({
+      ...values,
+      type,
+      name: values.username
+    }))
     try {
       // 登录
       const msg = await loginUser({ ...values, type });
@@ -77,7 +82,7 @@ const Login: React.FC = () => {
         <LoginForm
           logo={<img alt="logo" src="/logo.svg" />}
           title="后台管理系统"
-          subTitle="养老院后台管理"
+          subTitle="最好的后台管理系统"
           initialValues={{
             autoLogin: true,
           }}
@@ -247,7 +252,6 @@ const Login: React.FC = () => {
           </div>
         </LoginForm>
       </div>
-      <Footer />
     </div>
   );
 };
